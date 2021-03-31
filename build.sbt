@@ -38,7 +38,16 @@ val commonSettings = Def.settings(
       case Some((2, _)) =>
         (Test / sources).value
       case _ =>
-        Nil // TODO https://github.com/msgpack4z/msgpack4z-core/issues/134
+        // TODO https://github.com/msgpack4z/msgpack4z-core/issues/134
+        // https://github.com/lampepfl/dotty/issues/2335
+        // use `Tuple.fromProductTyped` instead of `unapply`
+        val exclude = Set(
+          "CaseClassExample",
+          "Java06Spec",
+          "Spec",
+          "StdSpec"
+        )
+        (Test / sources).value.filterNot(x => exclude(x.getName.dropRight(".scala".length)))
     }
   },
   ReleasePlugin.extraReleaseCommands,
@@ -120,7 +129,7 @@ val commonSettings = Def.settings(
     .toList
     .flatten,
   scalaVersion := Scala211,
-  crossScalaVersions := Scala211 :: "2.12.13" :: "2.13.5" :: "3.0.0-RC1" :: Nil,
+  crossScalaVersions := Scala211 :: "2.12.13" :: "2.13.5" :: "3.0.0-RC2" :: Nil,
   (Compile / doc / scalacOptions) ++= {
     val tag = tagOrHash.value
     Seq(
